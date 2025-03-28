@@ -118,7 +118,13 @@ public class PetStoreServiceImpl implements PetStoreService {
 	}
 
 	@Override
-	public Collection<Product> getProducts(String category, List<Tag> tags) {
+	public Collection<Product> getProducts(String category, List<Tag> tags) throws Exception {
+
+		this.sessionUser.getTelemetryClient().trackEvent(
+				String.format("PetStoreApp user %s is requesting to retrieve pets from the PetStorePetService",
+						this.sessionUser.getName()),
+				this.sessionUser.getCustomEventProperties(), null);
+
 		List<Product> products = new ArrayList<>();
 
 		try {
@@ -139,6 +145,8 @@ public class PetStoreServiceImpl implements PetStoreService {
 			// world production scenario)
 			this.sessionUser.setProducts(products);
 
+			logger.info("Quantity of products returned to the user: {}", products.size());
+
 			// filter this specific request per category
 			if (tags.stream().anyMatch(t -> t.getName().equals("large"))) {
 				products = products.stream().filter(product -> category.equals(product.getCategory().getName())
@@ -148,7 +156,9 @@ public class PetStoreServiceImpl implements PetStoreService {
 				products = products.stream().filter(product -> category.equals(product.getCategory().getName())
 						&& product.getTags().toString().contains("small")).collect(Collectors.toList());
 			}
-			return products;
+
+			throw new Exception("Cannot move further");
+//			return products;
 		} catch (
 
 		WebClientException wce) {

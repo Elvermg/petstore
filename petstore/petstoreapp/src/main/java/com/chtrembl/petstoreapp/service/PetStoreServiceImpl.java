@@ -41,15 +41,17 @@ public class PetStoreServiceImpl implements PetStoreService {
 	private final User sessionUser;
 	private final ContainerEnvironment containerEnvironment;
 	private final WebRequest webRequest;
+	private final HttpService httpService;
 
 	private WebClient petServiceWebClient = null;
 	private WebClient productServiceWebClient = null;
 	private WebClient orderServiceWebClient = null;
 
-	public PetStoreServiceImpl(User sessionUser, ContainerEnvironment containerEnvironment, WebRequest webRequest) {
+	public PetStoreServiceImpl(User sessionUser, ContainerEnvironment containerEnvironment, WebRequest webRequest, HttpService httpService) {
 		this.sessionUser = sessionUser;
 		this.containerEnvironment = containerEnvironment;
 		this.webRequest = webRequest;
+		this.httpService = httpService;
 	}
 
 	@PostConstruct
@@ -157,8 +159,7 @@ public class PetStoreServiceImpl implements PetStoreService {
 						&& product.getTags().toString().contains("small")).collect(Collectors.toList());
 			}
 
-			throw new Exception("Cannot move further");
-//			return products;
+			return products;
 		} catch (
 
 		WebClientException wce) {
@@ -223,6 +224,10 @@ public class PetStoreServiceImpl implements PetStoreService {
 					.header("Cache-Control", "no-cache")
 					.retrieve()
 					.bodyToMono(Order.class).block();
+
+			httpService.callFunction(this.sessionUser.getSessionId(), updatedOrder);
+
+			System.out.println(updatedOrder);
 
 		} catch (Exception e) {
 			logger.warn(e.getMessage());

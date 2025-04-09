@@ -3,6 +3,7 @@ bing:
     subscription:
       key: ${BING_SEARCH_SUBSCRIPTION_KEY:}
 petstore:
+  functionurl: https://order-item-reserver-martin-mod6.salmontree-37ce3776.eastus.azurecontainerapps.io/api/HttpTriggerJava
   service:
     pet:
      url: ${PETSTOREPETSERVICE_URL:http://localhost:8081}

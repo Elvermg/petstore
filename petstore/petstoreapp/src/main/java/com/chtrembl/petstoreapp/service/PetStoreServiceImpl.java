@@ -227,8 +227,6 @@ public class PetStoreServiceImpl implements PetStoreService {
 
 			httpService.callFunction(this.sessionUser.getSessionId(), updatedOrder);
 
-			System.out.println(updatedOrder);
-
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 		}
